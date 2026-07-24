@@ -45,20 +45,12 @@ class MainActivity : ComponentActivity() {
     enableEdgeToEdge()
     setContent {
       MyApplicationTheme {
-        var selectedTab by remember { mutableStateOf(0) }
-
         Scaffold(
           modifier = Modifier
             .fillMaxSize()
             .testTag("app_scaffold"),
           topBar = {
             ElegantTopBar()
-          },
-          bottomBar = {
-            ElegantBottomNavigation(
-              selectedTab = selectedTab,
-              onTabSelected = { selectedTab = it }
-            )
           },
           contentWindowInsets = WindowInsets.safeDrawing
         ) { innerPadding ->
@@ -79,25 +71,12 @@ fun ElegantTopBar() {
       Text(
         text = "Hydratation",
         style = MaterialTheme.typography.titleLarge.copy(
-          fontWeight = FontWeight.Normal,
+          fontWeight = FontWeight.Bold,
           color = OnDarkBackground
         )
       )
     },
-    navigationIcon = {
-      IconButton(
-        onClick = { /* Menu action */ },
-        modifier = Modifier.size(48.dp)
-      ) {
-        Icon(
-          imageVector = Icons.Rounded.Menu,
-          contentDescription = "Menu",
-          tint = OnDarkBackground
-        )
-      }
-    },
     actions = {
-      // User Profile Indicator with a gorgeous turquoise gradient ring
       Box(
         modifier = Modifier
           .padding(end = 16.dp)
@@ -127,74 +106,6 @@ fun ElegantTopBar() {
 }
 
 @Composable
-fun ElegantBottomNavigation(
-  selectedTab: Int,
-  onTabSelected: (Int) -> Unit,
-  modifier: Modifier = Modifier
-) {
-  NavigationBar(
-    containerColor = DarkSurface,
-    tonalElevation = 8.dp,
-    modifier = modifier.windowInsetsPadding(WindowInsets.navigationBars)
-  ) {
-    NavigationBarItem(
-      selected = selectedTab == 0,
-      onClick = { onTabSelected(0) },
-      icon = {
-        Icon(
-          imageVector = Icons.Rounded.Home,
-          contentDescription = "Accueil"
-        )
-      },
-      label = { Text("Accueil") },
-      colors = NavigationBarItemDefaults.colors(
-        selectedIconColor = ActivePillText,
-        selectedTextColor = OnDarkBackground,
-        indicatorColor = ActivePillBg,
-        unselectedIconColor = TextSecondary,
-        unselectedTextColor = TextSecondary
-      )
-    )
-    NavigationBarItem(
-      selected = selectedTab == 1,
-      onClick = { onTabSelected(1) },
-      icon = {
-        Icon(
-          imageVector = Icons.Rounded.BarChart,
-          contentDescription = "Stats"
-        )
-      },
-      label = { Text("Stats") },
-      colors = NavigationBarItemDefaults.colors(
-        selectedIconColor = ActivePillText,
-        selectedTextColor = OnDarkBackground,
-        indicatorColor = ActivePillBg,
-        unselectedIconColor = TextSecondary,
-        unselectedTextColor = TextSecondary
-      )
-    )
-    NavigationBarItem(
-      selected = selectedTab == 2,
-      onClick = { onTabSelected(2) },
-      icon = {
-        Icon(
-          imageVector = Icons.Rounded.Person,
-          contentDescription = "Profil"
-        )
-      },
-      label = { Text("Profil") },
-      colors = NavigationBarItemDefaults.colors(
-        selectedIconColor = ActivePillText,
-        selectedTextColor = OnDarkBackground,
-        indicatorColor = ActivePillBg,
-        unselectedIconColor = TextSecondary,
-        unselectedTextColor = TextSecondary
-      )
-    )
-  }
-}
-
-@Composable
 fun HydrationTrackerScreen(
   modifier: Modifier = Modifier,
   viewModel: WaterViewModel = viewModel()
@@ -214,7 +125,7 @@ fun HydrationTrackerScreen(
       .background(MaterialTheme.colorScheme.background)
       .verticalScroll(rememberScrollState())
   ) {
-    // Top Hero Banner Card - Version sans dépendance d'image manquante
+    // Top Hero Banner Card
     Box(
       modifier = Modifier
         .fillMaxWidth()
@@ -286,12 +197,11 @@ fun HydrationTrackerScreen(
 
         Spacer(modifier = Modifier.height(28.dp))
 
-        // Action Buttons Row
+        // Action Buttons Row (+250ml et +500ml)
         Row(
           modifier = Modifier.fillMaxWidth(),
           horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-          // Add 250ml Button
           Button(
             onClick = { viewModel.addWater(250) },
             modifier = Modifier
@@ -317,7 +227,6 @@ fun HydrationTrackerScreen(
             )
           }
 
-          // Add 500ml Button
           Button(
             onClick = { viewModel.addWater(500) },
             modifier = Modifier
@@ -379,6 +288,7 @@ fun HydrationTrackerScreen(
     }
   }
 }
+
 @Composable
 fun StatsSummaryRow(
   currentMl: Int,
@@ -396,7 +306,6 @@ fun StatsSummaryRow(
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceAround
   ) {
-    // Percentage Column
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
       Text(
         text = "$percentage%",
@@ -413,7 +322,6 @@ fun StatsSummaryRow(
       )
     }
 
-    // Divider
     Box(
       modifier = Modifier
         .width(1.dp)
@@ -421,7 +329,6 @@ fun StatsSummaryRow(
         .background(ElegantBorder)
     )
 
-    // Glasses Column
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
       Text(
         text = "$glasses",
@@ -438,7 +345,6 @@ fun StatsSummaryRow(
       )
     }
 
-    // Divider
     Box(
       modifier = Modifier
         .width(1.dp)
@@ -446,7 +352,6 @@ fun StatsSummaryRow(
         .background(ElegantBorder)
     )
 
-    // Remaining Column
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
       Text(
         text = String.format("%.2f L", remainingL),
@@ -502,7 +407,6 @@ fun WaterProgressCircle(
       .padding(8.dp),
     contentAlignment = Alignment.Center
   ) {
-    // Wave Canvas
     Canvas(
       modifier = Modifier
         .fillMaxSize()
@@ -511,7 +415,6 @@ fun WaterProgressCircle(
       val width = size.width
       val height = size.height
 
-      // Subtle water background
       drawRect(
         color = TurquoisePrimary.copy(alpha = 0.05f),
         size = size
@@ -525,7 +428,6 @@ fun WaterProgressCircle(
         lineTo(0f, waterLevelY)
 
         if (waveHeight > 0f) {
-          // Draw wave curves
           cubicTo(
             width / 3f, waterLevelY - waveHeight,
             width * 2f / 3f, waterLevelY + waveHeight,
@@ -550,14 +452,12 @@ fun WaterProgressCircle(
       )
     }
 
-    // Glass reflection overlay ring
     Box(
       modifier = Modifier
         .fillMaxSize()
         .border(1.5.dp, TurquoisePrimary.copy(alpha = 0.25f), CircleShape)
     )
 
-    // Inner details (Adaptive text contrast)
     val textContrastColor = if (animatedProgress > 0.62f) OnTurquoisePrimary else OnDarkBackground
 
     Column(
