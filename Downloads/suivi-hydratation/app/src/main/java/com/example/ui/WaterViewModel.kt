@@ -1,4 +1,4 @@
-package com.example.suivihydratation.ui
+package com.example.ui
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

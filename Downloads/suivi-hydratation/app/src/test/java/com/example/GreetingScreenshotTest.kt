@@ -1,5 +1,5 @@
 package com.example
-import com.example.suivihydratation.WaterProgressCircle
+
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import com.example.ui.theme.MyApplicationTheme

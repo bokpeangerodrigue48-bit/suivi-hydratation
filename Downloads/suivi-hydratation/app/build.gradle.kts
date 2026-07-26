@@ -11,16 +11,13 @@ plugins {
 }
 
 android {
-  namespace = "com.example.suivihydratation"
-
-  // Passé à 36 pour satisfaire les métadonnées AAR des dernières bibliothèques AndroidX
-  compileSdk = 35
+  namespace = "com.example"
+  compileSdk = 36
 
   defaultConfig {
-    applicationId = "com.example.suivihydratation"
+    applicationId = "com.aistudio.hydrationtracker.wqpxly"
     minSdk = 24
-    //noinspection OldTargetApi
-    targetSdk = 35 // Votre application cible toujours l'API 35
+    targetSdk = 36
     versionCode = 1
     versionName = "1.0"
 
@@ -35,6 +32,12 @@ android {
       keyAlias = "upload"
       keyPassword = System.getenv("KEY_PASSWORD")
     }
+//    create("debugConfig") {
+//      storeFile = file("${rootDir}/debug.keystore")
+//      storePassword = "android"
+//      keyAlias = "androiddebugkey"
+//      keyPassword = "android"
+//    }
   }
 
   buildTypes {
@@ -44,10 +47,8 @@ android {
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
       signingConfig = signingConfigs.getByName("release")
     }
-    debug {
-      signingConfig = signingConfigs.getByName("debug")
+    //debug { signingConfig = signingConfigs.getByName("debugConfig") }
     }
-  }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
@@ -62,6 +63,8 @@ android {
   }
 }
 
+// Configure the Secrets Gradle Plugin to use .env and .env.example files
+// to match the convention used in Web projects.
 secrets {
   propertiesFileName = ".env"
   defaultPropertiesFileName = ".env.example"
@@ -69,6 +72,8 @@ secrets {
 
 googleServices { missingGoogleServicesStrategy = MissingGoogleServicesStrategy.WARN }
 
+// Some unused dependencies are commented out below instead of being removed.
+// This makes it easy to add them back in the future if needed.
 dependencies {
   implementation(platform(libs.androidx.compose.bom))
   implementation(platform(libs.firebase.bom))
@@ -113,7 +118,7 @@ dependencies {
   implementation(libs.okhttp)
   // implementation(libs.play.services.location)
   implementation(libs.retrofit)
-  implementation(libs.androidx.core)
+  implementation(libs.core.ktx)
   testImplementation(libs.androidx.compose.ui.test.junit4)
   testImplementation(libs.androidx.core)
   testImplementation(libs.androidx.junit)
